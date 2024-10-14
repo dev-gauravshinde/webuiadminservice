@@ -32,7 +32,19 @@ const LoginBoxed = () => {
     };
     const [flag, setFlag] = useState(themeConfig.locale);
 
-    const submitForm = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [formErrors, setFormErrors] = useState({ email: false, password: false });
+
+    const submitForm = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (email === '' || password === '') {
+            setFormErrors({
+                email: email === '',
+                password: password === '',
+            });
+            return;
+        }
         navigate('/');
     };
 
@@ -76,7 +88,6 @@ const LoginBoxed = () => {
                                                         className={`flex w-full hover:text-primary rounded-lg ${flag === item.code ? 'bg-primary/10 text-primary' : ''}`}
                                                         onClick={() => {
                                                             i18next.changeLanguage(item.code);
-                                                            // setFlag(item.code);
                                                             setLocale(item.code);
                                                         }}
                                                     >
@@ -99,7 +110,16 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input
+                                            id="Email"
+                                            type="text"
+                                            placeholder="Enter Email"
+                                            className={`form-input ps-10 placeholder:text-white-dark ${formErrors.email ? 'border-red-500' : ''}`}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                        />
+                                        {formErrors.email && <p className="text-red-500 text-sm">Email is required</p>}
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
@@ -108,7 +128,16 @@ const LoginBoxed = () => {
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input
+                                            id="Password"
+                                            type="password"
+                                            placeholder="Enter Password"
+                                            className={`form-input ps-10 placeholder:text-white-dark ${formErrors.password ? 'border-red-500' : ''}`}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                        />
+                                        {formErrors.password && <p className="text-red-500 text-sm">Password is required</p>}
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
@@ -128,35 +157,23 @@ const LoginBoxed = () => {
                                         <Link
                                             to="#"
                                             className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
+                                            style={{ background: 'linear-gradient(45deg,#ff5994_0%,#ff084e_100%)' }}
                                         >
                                             <IconInstagram />
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
+                                        <Link to="#" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#1877F2] p-0 transition hover:scale-110">
                                             <IconFacebookCircle />
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
-                                            <IconTwitter fill={true} />
+                                        <Link to="#" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#1C9CEA] p-0 transition hover:scale-110">
+                                            <IconTwitter />
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link
-                                            to="#"
-                                            className="inline-flex h-8 w-8 items-center justify-center rounded-full p-0 transition hover:scale-110"
-                                            style={{ background: 'linear-gradient(135deg, rgba(239, 18, 98, 1) 0%, rgba(67, 97, 238, 1) 100%)' }}
-                                        >
+                                        <Link to="#" className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#FF5630] p-0 transition hover:scale-110">
                                             <IconGoogle />
                                         </Link>
                                     </li>
