@@ -12,6 +12,7 @@ import IconInstagram from '../../components/Icon/IconInstagram';
 import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
 import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
+import axios from 'axios';
 
 const LoginBoxed = () => {
     const dispatch = useDispatch();
@@ -35,8 +36,10 @@ const LoginBoxed = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [formErrors, setFormErrors] = useState({ email: false, password: false });
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    const submitForm = (e: React.FormEvent) => {
+    const submitForm = async (e: React.FormEvent) => {
         e.preventDefault();
         if (email === '' || password === '') {
             setFormErrors({
@@ -45,7 +48,33 @@ const LoginBoxed = () => {
             });
             return;
         }
-        navigate('/');
+        setFormErrors({ email: false, password: false });
+        setLoading(true);
+        setErrorMessage('');
+
+        try {
+            const response = await axios.post('https://api.finoracleassociates.in/api/User/authenticate', {
+                email: email,
+                password: password,
+            });
+
+            setTimeout(() => {
+                if (response.data.success) {
+                    const { token } = response.data;
+                    localStorage.setItem('authToken', token);
+                    navigate('/');
+                } else {
+                    setErrorMessage(response.data.message || 'Authentication failed');
+                }
+                setLoading(false);
+            }, 1000);
+        } catch (error: any) {
+            setTimeout(() => {
+                setErrorMessage(error.response?.data?.message || 'An error occurred. Please try again.');
+                setLoading(false);
+            }, 1000);
+        } finally {
+        }
     };
 
     return (
@@ -143,8 +172,9 @@ const LoginBoxed = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                    Sign in
+                                {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+                                <button type="submit" disabled={loading} className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                                    {loading ? 'Signing in...' : 'Sign in'}
                                 </button>
                             </form>
                             <div className="relative my-7 text-center md:mb-9">
