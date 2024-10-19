@@ -1,10 +1,12 @@
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconPlus from './../../components/Icon/IconPlus';
+import { Dialog, Transition } from '@headlessui/react';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
+import IconPlus from './../../components/Icon/IconPlus';
+import IconX from './../../components/Icon/IconX';
 
 const MenuMaster = () => {
     const dispatch = useDispatch();
@@ -20,6 +22,7 @@ const MenuMaster = () => {
     const [search, setSearch] = useState('');
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
     const [loading, setLoading] = useState(false);
+    const [addMenuModal, setAddMenuModal] = useState<any>(false);
 
     const fetchMenuData = async () => {
         setLoading(true);
@@ -55,6 +58,7 @@ const MenuMaster = () => {
 
     const onAddMenuClick = () => {
         console.log('add menu clicked');
+        setAddMenuModal(true);
     };
 
     return (
@@ -102,6 +106,50 @@ const MenuMaster = () => {
                     />
                 </div>
             </div>
+
+            <Transition appear show={addMenuModal} as={Fragment}>
+                <Dialog as="div" open={addMenuModal} onClose={() => setAddMenuModal(false)} className="relative z-[51]">
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0 bg-[black]/60" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center px-4 py-8">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
+                                    <button
+                                        type="button"
+                                        onClick={() => setAddMenuModal(false)}
+                                        className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
+                                    >
+                                        <IconX />
+                                    </button>
+                                    <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add Menu</div>
+                                    <div className="p-5">
+                                        <form>
+                                            <div className="flex justify-end items-center mt-8">
+                                                <button type="button" className="btn btn-outline-danger" onClick={() => setAddMenuModal(false)}>
+                                                    Cancel
+                                                </button>
+                                                <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4">
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </div>
     );
 };
