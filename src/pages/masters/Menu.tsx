@@ -24,13 +24,14 @@ const MenuMaster = () => {
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
     const [recordsData, setRecordsData] = useState<any[]>([]);
+    const [menuData, setMenuData] = useState<any[]>([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [search, setSearch] = useState('');
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
     const [loading, setLoading] = useState(false);
     const [addMenuModal, setAddMenuModal] = useState<any>(false);
 
-    const fetchMenuData = async () => {
+    const fetchPagingMenuData = async () => {
         setLoading(true);
         try {
             const response = await axios.get('https://api.finoracleassociates.in/api/Menu/pagingwithsearch', {
@@ -57,7 +58,21 @@ const MenuMaster = () => {
         }
     };
 
+    const fetchMenuData = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get('https://automechreports.in:8082/api/Menu');
+            setMenuData(response.data);
+        } catch (error) {
+            console.error('Error fetching menu data from an API:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // fetch data when component loads
     useEffect(() => {
+        fetchPagingMenuData();
         fetchMenuData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, pageSize, search, sortStatus]);
@@ -158,8 +173,8 @@ const MenuMaster = () => {
                                                     <input id="parentId" type="text" placeholder="Enter Parent Id" className="form-input" />
                                                 </div>
                                                 <div className="mb-5">
-                                                    <label htmlFor="status">Status</label>
-                                                    <Select placeholder="Select an option" defaultValue={statusOptions[0]} options={statusOptions} isSearchable={false} />
+                                                    <label htmlFor="childId">Child Id</label>
+                                                    <Select placeholder="Select an option" options={menuData} isSearchable={false} />
                                                 </div>
                                                 <div className="mb-5">
                                                     <label htmlFor="status">Status</label>
