@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import Select from 'react-select';
 import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
 import IconPlus from './../../components/Icon/IconPlus';
 import IconX from './../../components/Icon/IconX';
@@ -13,6 +14,11 @@ const MenuMaster = () => {
     useEffect(() => {
         dispatch(setPageTitle('Alternative Pagination Table'));
     }, [dispatch]);
+
+    const statusOptions = [
+        { value: 'inactive', label: 'InActive' },
+        { value: 'active', label: 'Active' },
+    ];
 
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
@@ -123,7 +129,7 @@ const MenuMaster = () => {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
+                                <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-2xl text-black dark:text-white-dark">
                                     <button
                                         type="button"
                                         onClick={() => setAddMenuModal(false)}
@@ -132,8 +138,53 @@ const MenuMaster = () => {
                                         <IconX />
                                     </button>
                                     <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add Menu</div>
-                                    <div className="p-5">
+                                    <div className="p-5 md:p-8">
                                         <form>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                                <div className="mb-5">
+                                                    <label htmlFor="menuName">Menu Name</label>
+                                                    <input id="menuName" type="text" placeholder="Enter Menu Name" className="form-input" />
+                                                </div>
+                                                <div className="mb-5">
+                                                    <label htmlFor="icon">Icon</label>
+                                                    <input id="icon" type="text" placeholder="Enter Icon Name" className="form-input" />
+                                                </div>
+                                                <div className="mb-5">
+                                                    <label htmlFor="link">Link</label>
+                                                    <input id="link" type="text" placeholder="Enter Link" className="form-input" />
+                                                </div>
+                                                <div className="mb-5">
+                                                    <label htmlFor="parentId">Parent Id</label>
+                                                    <input id="parentId" type="text" placeholder="Enter Parent Id" className="form-input" />
+                                                </div>
+                                                <div className="mb-5">
+                                                    <label htmlFor="status">Status</label>
+                                                    <Select placeholder="Select an option" defaultValue={statusOptions[0]} options={statusOptions} isSearchable={false} />
+                                                </div>
+                                                <div className="mb-5">
+                                                    <label htmlFor="status">Status</label>
+                                                    <Select placeholder="Select an option" defaultValue={statusOptions[0]} options={statusOptions} isSearchable={false} />
+                                                </div>
+                                                <div className="mb-5">
+                                                    <div className="flex items-center">
+                                                        <label className="w-12 h-6 relative">
+                                                            <input type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="isTitle" />
+                                                            <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                        </label>
+                                                        <span className="ml-2 text-white-dark">Is Title</span>
+                                                    </div>
+                                                </div>
+                                                <div className="mb-5">
+                                                    <div className="flex items-center">
+                                                        <label className="w-12 h-6 relative">
+                                                            <input type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="isAccess" />
+                                                            <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                        </label>
+                                                        <span className="ml-2 text-white-dark">Is Access</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div className="flex justify-end items-center mt-8">
                                                 <button type="button" className="btn btn-outline-danger" onClick={() => setAddMenuModal(false)}>
                                                     Cancel
