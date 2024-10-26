@@ -5,6 +5,8 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import Select from 'react-select';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
 import IconPlus from './../../components/Icon/IconPlus';
 import IconX from './../../components/Icon/IconX';
@@ -78,9 +80,39 @@ const MenuMaster = () => {
     }, [page, pageSize, search, sortStatus]);
 
     const onAddMenuClick = () => {
-        console.log('add menu clicked');
         setAddMenuModal(true);
     };
+
+    const initialValues = {
+        menuName: '',
+        icon: '',
+        link: '',
+        parentId: '',
+        childId: null,
+        status: statusOptions[0],
+        isTitle: false,
+        isAccess: false,
+    };
+
+    const validationSchema = Yup.object({
+        menuName: Yup.string().required('Menu Name is required'),
+        icon: Yup.string().required('Icon is required'),
+        link: Yup.string().required('Link is required'),
+        parentId: Yup.string().required('Parent Id is required'),
+        childId: Yup.object().required('Child Id is required'),
+        status: Yup.object().required('Status is required'),
+    });
+
+    const onSubmit = (values: any) => {
+        console.log('Form values:', values);
+        setAddMenuModal(false);
+    };
+
+    const options = [
+        { value: 'orange', label: 'Orange' },
+        { value: 'white', label: 'White' },
+        { value: 'purple', label: 'Purple' },
+    ];
 
     return (
         <div>
@@ -154,61 +186,94 @@ const MenuMaster = () => {
                                     </button>
                                     <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add Menu</div>
                                     <div className="p-5 md:p-8">
-                                        <form>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                                <div className="mb-5">
-                                                    <label htmlFor="menuName">Menu Name</label>
-                                                    <input id="menuName" type="text" placeholder="Enter Menu Name" className="form-input" />
-                                                </div>
-                                                <div className="mb-5">
-                                                    <label htmlFor="icon">Icon</label>
-                                                    <input id="icon" type="text" placeholder="Enter Icon Name" className="form-input" />
-                                                </div>
-                                                <div className="mb-5">
-                                                    <label htmlFor="link">Link</label>
-                                                    <input id="link" type="text" placeholder="Enter Link" className="form-input" />
-                                                </div>
-                                                <div className="mb-5">
-                                                    <label htmlFor="parentId">Parent Id</label>
-                                                    <input id="parentId" type="text" placeholder="Enter Parent Id" className="form-input" />
-                                                </div>
-                                                <div className="mb-5">
+                                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                                            <Form>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                                    <div className="mb-5">
+                                                        <label htmlFor="menuName">Menu Name</label>
+                                                        <Field id="menuName" name="menuName" type="text" placeholder="Enter Menu Name" className="form-input" />
+                                                        <ErrorMessage name="menuName" component="div" className="text-red-500 text-sm" />
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <label htmlFor="icon">Icon</label>
+                                                        <Field id="icon" name="icon" type="text" placeholder="Enter Icon Name" className="form-input" />
+                                                        <ErrorMessage name="icon" component="div" className="text-red-500 text-sm" />
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <label htmlFor="link">Link</label>
+                                                        <Field id="link" name="link" type="text" placeholder="Enter Link" className="form-input" />
+                                                        <ErrorMessage name="link" component="div" className="text-red-500 text-sm" />
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <label htmlFor="parentId">Parent Id</label>
+                                                        <Field id="parentId" name="parentId" type="text" placeholder="Enter Parent Id" className="form-input" />
+                                                        <ErrorMessage name="parentId" component="div" className="text-red-500 text-sm" />
+                                                    </div>
+                                                    {/* <div className="mb-5 custom-select">
+                                                        <label htmlFor="childId">Child Id</label>
+                                                        <Field id="childId" name="childId" as="select" className="form-input">
+                                                            <option value="">Select Child Id</option>
+                                                            {menuData.map((item) => (
+                                                                <option key={item.id} value={item.id}>
+                                                                    {item.label}
+                                                                </option>
+                                                            ))}
+                                                        </Field>
+                                                        <ErrorMessage name="childId" component="div" className="text-red-500 text-sm" />
+                                                    </div> */}
+                                                    {/* <div className="mb-5 custom-select">
                                                     <label htmlFor="childId">Child Id</label>
-                                                    <Select placeholder="Select an option" options={menuData} isSearchable={false} />
-                                                </div>
-                                                <div className="mb-5">
-                                                    <label htmlFor="status">Status</label>
-                                                    <Select placeholder="Select an option" defaultValue={statusOptions[0]} options={statusOptions} isSearchable={false} />
-                                                </div>
-                                                <div className="mb-5">
-                                                    <div className="flex items-center">
-                                                        <label className="w-12 h-6 relative">
-                                                            <input type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="isTitle" />
-                                                            <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
-                                                        </label>
-                                                        <span className="ml-2 text-white-dark">Is Title</span>
+                                                        <Select placeholder="Select an option" options={menuData} />
+                                                    </div> */}
+                                                    <div className="mb-5 custom-select">
+                                                        <label htmlFor="childId">Child Id</label>
+                                                        <Select placeholder="Select Child Id" options={menuData} />
+                                                        <ErrorMessage name="childId" component="div" className="text-red-500 text-sm" />
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <label htmlFor="status">Status</label>
+                                                        <Field name="status" as={Select} options={statusOptions} />
+                                                        <ErrorMessage name="status" component="div" className="text-red-500 text-sm" />
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field
+                                                                    type="checkbox"
+                                                                    className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
+                                                                    id="isTitle"
+                                                                    name="isTitle"
+                                                                />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">Is Title</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field
+                                                                    type="checkbox"
+                                                                    className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
+                                                                    id="isAccess"
+                                                                    name="isAccess"
+                                                                />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">Is Access</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="mb-5">
-                                                    <div className="flex items-center">
-                                                        <label className="w-12 h-6 relative">
-                                                            <input type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="isAccess" />
-                                                            <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
-                                                        </label>
-                                                        <span className="ml-2 text-white-dark">Is Access</span>
-                                                    </div>
+                                                <div className="flex justify-end items-center mt-8">
+                                                    <button type="button" className="btn btn-outline-danger" onClick={() => setAddMenuModal(false)}>
+                                                        Cancel
+                                                    </button>
+                                                    <button type="submit" className="btn btn-primary ltr:ml-4 rtl:mr-4">
+                                                        Add
+                                                    </button>
                                                 </div>
-                                            </div>
-
-                                            <div className="flex justify-end items-center mt-8">
-                                                <button type="button" className="btn btn-outline-danger" onClick={() => setAddMenuModal(false)}>
-                                                    Cancel
-                                                </button>
-                                                <button type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4">
-                                                    Add
-                                                </button>
-                                            </div>
-                                        </form>
+                                            </Form>
+                                        </Formik>
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>
