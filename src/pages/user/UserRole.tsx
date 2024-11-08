@@ -8,7 +8,7 @@ import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
 import IconPlus from './../../components/Icon/IconPlus';
 import IconX from './../../components/Icon/IconX';
 
-const RoleMaster: React.FC = () => {
+const UserRole: React.FC = () => {
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -20,10 +20,10 @@ const RoleMaster: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [addMenuModal, setAddRoleModal] = useState<any>(false);
 
-    const fetchPagingData = async () => {
+    const fetchPagingMenuData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://api.finoracleassociates.in/api/UserRoleMapping/pagingwithsearch', {
+            const response = await axios.get('https://api.finoracleassociates.in/api/UserRole/pagingwithsearch', {
                 params: {
                     sort: sortStatus.columnAccessor,
                     desc: sortStatus.direction === 'desc',
@@ -50,8 +50,7 @@ const RoleMaster: React.FC = () => {
     const fetchMenuData = async () => {
         setLoading(true);
         try {
-            // const response = await axios.get('https://automechreports.in:8082/api/Menu');
-            const response = await axios.get('https://api.finoracleassociates.in/api/Menu');
+            const response = await axios.get('https://automechreports.in:8082/api/Menu');
             setRoleData(response.data);
         } catch (error) {
             console.error('Error fetching menu data from an API:', error);
@@ -62,7 +61,7 @@ const RoleMaster: React.FC = () => {
 
     // fetch data when component loads
     useEffect(() => {
-        fetchPagingData();
+        fetchPagingMenuData();
         fetchMenuData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, pageSize, search, sortStatus]);
@@ -193,4 +192,4 @@ const RoleMaster: React.FC = () => {
     );
 };
 
-export default RoleMaster;
+export default UserRole;
