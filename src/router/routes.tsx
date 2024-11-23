@@ -4,6 +4,8 @@ const LoginBoxed = lazy(() => import('../pages/authentication/LoginBoxed'));
 const MenuMaster = lazy(() => import('../pages/masters/Menu'));
 const Select2 = lazy(() => import('../pages/masters/Select2'));
 const RoleMaster = lazy(() => import('../pages/masters/RoleMaster'));
+const UserRole = lazy(() => import('../pages/user/UserRole'));
+const UserList = lazy(() => import('../pages/user/UserList'));
 
 const routes = [
     // dashboard
@@ -30,6 +32,16 @@ const routes = [
     {
         path: '/role-master',
         element: <RoleMaster />,
+        layout: 'blank',
+    },
+    {
+        path: '/user-role',
+        element: <UserRole />,
+        layout: 'blank',
+    },
+    {
+        path: '/user-list',
+        element: <UserList />,
         layout: 'blank',
     },
 

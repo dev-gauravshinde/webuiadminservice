@@ -2,25 +2,33 @@ import { useEffect, useState, Fragment } from 'react';
 import axios from 'axios';
 import { Dialog, Transition } from '@headlessui/react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
 import IconPlus from './../../components/Icon/IconPlus';
 import IconX from './../../components/Icon/IconX';
+import Select from 'react-select';
 
 const UserRole: React.FC = () => {
+    const selectOptions = [
+        { value: 'orange', label: 'Orange' },
+        { value: 'white', label: 'White' },
+        { value: 'purple', label: 'Purple' },
+    ];
+
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
     const [recordsData, setRecordsData] = useState<any[]>([]);
     const [roleData, setRoleData] = useState<any[]>([]);
+    const [userData, setUserData] = useState<any[]>([]);
     const [totalRecords, setTotalRecords] = useState(0);
     const [search, setSearch] = useState('');
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({ columnAccessor: 'id', direction: 'asc' });
     const [loading, setLoading] = useState(false);
     const [addMenuModal, setAddRoleModal] = useState<any>(false);
 
-    const fetchPagingMenuData = async () => {
+    const fetchPagingData = async () => {
         setLoading(true);
         try {
             const response = await axios.get('https://api.finoracleassociates.in/api/UserRole/pagingwithsearch', {
@@ -50,7 +58,7 @@ const UserRole: React.FC = () => {
     const fetchMenuData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://automechreports.in:8082/api/Menu');
+            const response = await axios.get('https://api.finoracleassociates.in/api/Menu');
             setRoleData(response.data);
         } catch (error) {
             console.error('Error fetching menu data from an API:', error);
@@ -59,10 +67,30 @@ const UserRole: React.FC = () => {
         }
     };
 
+    const fetchUserRoleData = async () => {
+        try {
+            const response = await axios.get('https://api.finoracleassociates.in/api/UserRole');
+            setRoleData(response.data);
+        } catch (error) {
+            console.error('Error fetching user role data from an API:', error);
+        }
+    };
+
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get('https://api.finoracleassociates.in/api/User');
+            setUserData(response.data);
+        } catch (error) {
+            console.error('Error fetching user data from an API:', error);
+        }
+    };
+
     // fetch data when component loads
     useEffect(() => {
-        fetchPagingMenuData();
+        fetchPagingData();
         fetchMenuData();
+        fetchUserRoleData();
+        fetchUserData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, pageSize, search, sortStatus]);
 
@@ -70,25 +98,49 @@ const UserRole: React.FC = () => {
         setAddRoleModal(true);
     };
 
-    const initialValues = {
+    interface UserRoleFormValues {
+        roleName: string;
+        desc: string;
+        status: number;
+        createDate: string;
+        updateDate: string;
+        createdBy: number;
+        updatedBy: number;
+    }
+
+    const initialValues: UserRoleFormValues = {
         roleName: '',
-        description: '',
+        desc: '',
+        status: 0,
+        createDate: new Date().toISOString(),
+        updateDate: new Date().toISOString(),
+        createdBy: 0,
+        updatedBy: 0,
     };
 
     const validationSchema = Yup.object({
         roleName: Yup.string().required('Role Name is required'),
-        description: Yup.string().required('Description is required'),
+        desc: Yup.string().required('Description is required'),
     });
 
-    const onSubmit = (values: any) => {
-        console.log('Form values:', values);
-        setAddRoleModal(false);
+    const handleSubmit = async (values: UserRoleFormValues, { setSubmitting, resetForm }: FormikHelpers<UserRoleFormValues>) => {
+        try {
+            const response = await axios.post('https://api.finoracleassociates.in/api/UserRole', values);
+            console.log('POST Successful:', response.data);
+            alert('Role added successfully!');
+            resetForm();
+        } catch (error) {
+            console.error('POST Error:', error);
+            alert('An error occurred while adding the role.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
         <div>
             <div className="panel mt-6">
-                <h5 className="font-semibold text-lg dark:text-white-light">Role List</h5>
+                <h5 className="font-semibold text-lg dark:text-white-light">User Role</h5>
                 <div className="flex items-center lg:justify-end justify-center flex-wrap gap-4 mb-6">
                     <button type="button" className="btn btn-primary gap-2" onClick={() => onAddRoleClick()}>
                         <IconPlus />
@@ -157,18 +209,35 @@ const UserRole: React.FC = () => {
                                     </button>
                                     <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add Role</div>
                                     <div className="p-5 md:p-8">
-                                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                                             <Form>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                                    <div className="mb-5">
+                                                    <div className="mb-5 custom-select">
                                                         <label htmlFor="roleName">Role Name</label>
-                                                        <Field id="roleName" name="roleName" type="text" placeholder="Enter Role Name" className="form-input" />
+                                                        <Field name="roleName">
+                                                            {({ field, form }: any) => (
+                                                                <Select
+                                                                    placeholder="Select an option"
+                                                                    options={selectOptions}
+                                                                    value={selectOptions.find((option) => option.value === field.value)}
+                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.value : '')}
+                                                                    onBlur={() => form.setFieldTouched(field.name, true)}
+                                                                    isClearable
+                                                                    menuPortalTarget={document.body}
+                                                                    menuPosition="absolute"
+                                                                    styles={{
+                                                                        menuPortal: (base) => ({ ...base, zIndex: 1050 }),
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </Field>
                                                         <ErrorMessage name="roleName" component="div" className="text-red-500 text-sm" />
                                                     </div>
+
                                                     <div className="mb-5">
-                                                        <label htmlFor="description">Description</label>
-                                                        <Field id="description" name="description" type="text" placeholder="Enter Description" className="form-input" />
-                                                        <ErrorMessage name="description" component="div" className="text-red-500 text-sm" />
+                                                        <label htmlFor="desc">Description</label>
+                                                        <Field id="desc" name="desc" type="text" placeholder="Enter Description" className="form-input" />
+                                                        <ErrorMessage name="desc" component="div" className="text-red-500 text-sm" />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-end items-center mt-8">
