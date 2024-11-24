@@ -1,0 +1,92 @@
+[
+    {
+        "label": "Dashboard",
+        "icon": "IconMenuDashboard",
+        "link": "#",
+        "parentId": 0,
+        "childId": 1,
+        "isTitle": false,
+        "isAccess": true,
+        "status": 1,
+        "subItems": [
+            {
+                "label": "Sales",
+                "link": "/",
+                "isAccess": true,
+                "status": 1
+            },
+            {
+                "label": "Analytics",
+                "link": "/analytics",
+                "isAccess": true,
+                "status": 1
+            }
+        ]
+    },
+    {
+        "label": "Masters",
+        "icon": "",
+        "link": "",
+        "parentId": 0,
+        "childId": 0,
+        "isTitle": true,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    },
+    {
+        "label": "Role Master",
+        "icon": "IconMenuDocumentation",
+        "link": "/apps/notes",
+        "parentId": 0,
+        "childId": 2,
+        "isTitle": false,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    },
+    {
+        "label": "Menu Master",
+        "icon": "IconMenuWidgets",
+        "link": "/masters/menu-master",
+        "parentId": 0,
+        "childId": 2,
+        "isTitle": false,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    },
+    {
+        "label": "Users",
+        "icon": "",
+        "link": "",
+        "parentId": 1,
+        "childId": 0,
+        "isTitle": true,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    },
+    {
+        "label": "User Role",
+        "icon": "IconMenuUsers",
+        "link": "/apps/user-role",
+        "parentId": 1,
+        "childId": 0,
+        "isTitle": false,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    },
+    {
+        "label": "User List",
+        "icon": "IconMenuNotes",
+        "link": "/apps/user-list",
+        "parentId": 1,
+        "childId": 2,
+        "isTitle": false,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    }
+]

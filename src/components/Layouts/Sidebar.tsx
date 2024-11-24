@@ -7,13 +7,8 @@ import AnimateHeight from 'react-animate-height';
 import { IRootState } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
-import IconCaretDown from '../Icon/IconCaretDown';
-import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
-import IconMinus from '../Icon/IconMinus';
-import IconMenuNotes from '../Icon/Menu/IconMenuNotes';
-import IconMenuWidgets from '../Icon/Menu/IconMenuWidgets';
-import IconMenuUsers from '../Icon/Menu/IconMenuUsers';
-import IconMenuDocumentation from '../Icon/Menu/IconMenuDocumentation';
+import menuData from '../../shared/mocked-json/menuData.json';
+import * as Icons from '../Icon/IconExports';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -53,6 +48,42 @@ const Sidebar = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location]);
 
+    const renderIcon = (iconName: string) => {
+        const IconComponent = (Icons as any)[iconName];
+        return IconComponent ? <IconComponent className="shrink-0" /> : null;
+    };
+
+    // Recursively render the menu
+    const renderMenu = (menu: any) => {
+        return menu.map((item: any) => (
+            <li key={item.childId} className={`menu nav-item ${item.isTitle ? 'uppercase font-extrabold' : ''}`}>
+                {item.isTitle ? (
+                    <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">{item.label}</h2>
+                ) : (
+                    <>
+                        <button type="button" className={`nav-link group w-full ${currentMenu === item.label ? 'active' : ''}`} onClick={() => toggleMenu(item.label)}>
+                            <div className="flex items-center">
+                                {renderIcon(item.icon)}
+                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690]">{t(item.label)}</span>
+                            </div>
+                        </button>
+                        {item.subItems && item.subItems.length > 0 && (
+                            <AnimateHeight duration={300} height={currentMenu === item.label ? 'auto' : 0}>
+                                <ul className="sub-menu text-gray-500">
+                                    {item.subItems.map((sub: any) => (
+                                        <li key={sub.link}>
+                                            <NavLink to={sub.link}>{t(sub.label)}</NavLink>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </AnimateHeight>
+                        )}
+                    </>
+                )}
+            </li>
+        ));
+    };
+
     return (
         <div className={semidark ? 'dark' : ''}>
             <nav
@@ -73,89 +104,8 @@ const Sidebar = () => {
                             <IconCaretsDown className="m-auto rotate-90" />
                         </button>
                     </div>
-                    <PerfectScrollbar className="h-[calc(100vh-80px)] relative">
-                        <ul className="relative font-semibold space-y-0.5 p-4 py-0">
-                            <li className="menu nav-item">
-                                <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
-                                    <div className="flex items-center">
-                                        <IconMenuDashboard
-                                         className="group-hover:!text-primary shrink-0" />
-                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('dashboard')}</span>
-                                    </div>
-
-                                    <div className={currentMenu !== 'dashboard' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                        <IconCaretDown />
-                                    </div>
-                                </button>
-
-                                <AnimateHeight duration={300} height={currentMenu === 'dashboard' ? 'auto' : 0}>
-                                    <ul className="sub-menu text-gray-500">
-                                        <li>
-                                            <NavLink to="/">{t('sales')}</NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/analytics">{t('analytics')}</NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/finance">{t('finance')}</NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/crypto">{t('crypto')}</NavLink>
-                                        </li>
-                                    </ul>
-                                </AnimateHeight>
-                            </li>
-
-                            <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
-                                <IconMinus className="w-4 h-5 flex-none hidden" />
-                                <span>Masters</span>
-                            </h2>
-
-                            <li className="nav-item">
-                                <ul>
-                                    <li className="nav-item">
-                                        <NavLink to="/apps/notes" className="group">
-                                            <div className="flex items-center">
-                                            <IconMenuDocumentation className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Role Master</span>
-                                            </div>
-                                        </NavLink>
-                                    </li>
-                                    <li className="nav-item">
-                                        <NavLink to="/apps/scrumboard" className="group">
-                                            <div className="flex items-center">
-                                            <IconMenuWidgets className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Menu Master</span>
-                                            </div>
-                                        </NavLink>
-                                    </li>
-                                </ul>
-                            </li>
-
-                            <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
-                                <IconMinus className="w-4 h-5 flex-none hidden" />
-                                <span>Users</span>
-                            </h2>
-
-                            <li className="menu nav-item">
-                                <NavLink to="/charts" className="group">
-                                    <div className="flex items-center">
-                                    <IconMenuUsers className="group-hover:!text-primary shrink-0" />
-                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">User Role</span>
-                                    </div>
-                                </NavLink>
-                            </li>
-
-                            <li className="menu nav-item">
-                                <NavLink to="/widgets" className="group">
-                                    <div className="flex items-center">
-                                    <IconMenuNotes className="group-hover:!text-primary shrink-0" />
-                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">User List</span>
-                                    </div>
-                                </NavLink>
-                            </li>
-
-                        </ul>
+                    <PerfectScrollbar className="h-[calc(100vh-80px)]">
+                        <ul className="relative font-semibold space-y-0.5 p-4 py-0">{renderMenu(menuData)}</ul>
                     </PerfectScrollbar>
                 </div>
             </nav>

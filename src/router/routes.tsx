@@ -20,7 +20,7 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/menuMaster',
+        path: '/masters/menu-master',
         element: <MenuMaster />,
         layout: 'blank',
     },
@@ -30,17 +30,17 @@ const routes = [
         layout: 'blank',
     },
     {
-        path: '/role-master',
+        path: '/masters/role-master',
         element: <RoleMaster />,
         layout: 'blank',
     },
     {
-        path: '/user-role',
+        path: '/user/user-role',
         element: <UserRole />,
         layout: 'blank',
     },
     {
-        path: '/user-list',
+        path: '/user/user-list',
         element: <UserList />,
         layout: 'blank',
     },
