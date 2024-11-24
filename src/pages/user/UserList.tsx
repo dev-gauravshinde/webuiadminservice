@@ -88,11 +88,11 @@ const UserList: React.FC = () => {
     return (
         <div>
             <div className="panel mt-6">
-                <h5 className="font-semibold text-lg dark:text-white-light">Role List</h5>
+                <h5 className="font-semibold text-lg dark:text-white-light">User List</h5>
                 <div className="flex items-center lg:justify-end justify-center flex-wrap gap-4 mb-6">
                     <button type="button" className="btn btn-primary gap-2" onClick={() => onAddRoleClick()}>
                         <IconPlus />
-                        Add Role
+                        Add User
                     </button>
                 </div>
                 <div className="flex md:items-center md:flex-row flex-col mb-5 gap-5">
@@ -155,7 +155,7 @@ const UserList: React.FC = () => {
                                     >
                                         <IconX />
                                     </button>
-                                    <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add Role</div>
+                                    <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add User</div>
                                     <div className="p-5 md:p-8">
                                         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
                                             <Form>

@@ -5,7 +5,7 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import Select from 'react-select';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
 import IconPlus from './../../components/Icon/IconPlus';
@@ -83,30 +83,61 @@ const MenuMaster = () => {
         setAddMenuModal(true);
     };
 
-    const initialValues = {
-        menuName: '',
+    interface MenuFormValues {
+        label: string;
+        icon: string;
+        link: string;
+        parentId: number;
+        childId: number;
+        isTitle: boolean;
+        isAccess: boolean;
+        status: number;
+        subItems: string[];
+      }
+
+    const initialValues: MenuFormValues = {
+        label: '',
         icon: '',
         link: '',
-        parentId: '',
-        childId: null,
-        status: statusOptions[0],
-        isTitle: false,
-        isAccess: false,
-    };
+        parentId: 0,
+        childId: 0,
+        isTitle: true,
+        isAccess: true,
+        status: 0,
+        subItems: [''],
+      };
 
     const validationSchema = Yup.object({
-        menuName: Yup.string().required('Menu Name is required'),
+        // menuName: Yup.string().required('Menu Name is required'),
+        // icon: Yup.string().required('Icon is required'),
+        // link: Yup.string().required('Link is required'),
+        // parentId: Yup.string().required('Parent Id is required'),
+        // childId: Yup.object().required('Child Id is required'),
+        // status: Yup.object().required('Status is required'),
+        label: Yup.string().required('Label is required'),
         icon: Yup.string().required('Icon is required'),
-        link: Yup.string().required('Link is required'),
-        parentId: Yup.string().required('Parent Id is required'),
-        childId: Yup.object().required('Child Id is required'),
-        status: Yup.object().required('Status is required'),
+        link: Yup.string().url('Invalid URL').required('Link is required'),
+        parentId: Yup.number().required('Parent ID is required').min(0, 'Parent ID cannot be negative'),
+        childId: Yup.number().required('Child ID is required').min(0, 'Child ID cannot be negative'),
+        isTitle: Yup.boolean().required('IsTitle is required'),
+        isAccess: Yup.boolean().required('IsAccess is required'),
+        status: Yup.number().required('Status is required').min(0, 'Status must be at least 0'),
+        subItems: Yup.array().of(Yup.string().required('SubItem cannot be empty')).min(1, 'At least one subItem is required'),
     });
 
-    const onSubmit = (values: any) => {
-        console.log('Form values:', values);
-        setAddMenuModal(false);
-    };
+    const handleSubmit = async (values: MenuFormValues, { setSubmitting, resetForm }: FormikHelpers<MenuFormValues>) => {
+        try {
+          const response = await axios.post('https://api.finoracleassociates.in/api/Menu', values);
+          console.log('Response:', response.data);
+          alert('Menu item added successfully!');
+          resetForm(); // Reset form after successful submission
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Failed to add menu item');
+        } finally {
+          setSubmitting(false);
+        }
+      };
 
     const options = [
         { value: 'orange', label: 'Orange' },
@@ -186,7 +217,7 @@ const MenuMaster = () => {
                                     </button>
                                     <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">Add Menu</div>
                                     <div className="p-5 md:p-8">
-                                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                                        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                                             <Form>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                                     <div className="mb-5">
@@ -209,22 +240,6 @@ const MenuMaster = () => {
                                                         <Field id="parentId" name="parentId" type="text" placeholder="Enter Parent Id" className="form-input" />
                                                         <ErrorMessage name="parentId" component="div" className="text-red-500 text-sm" />
                                                     </div>
-                                                    {/* <div className="mb-5 custom-select">
-                                                        <label htmlFor="childId">Child Id</label>
-                                                        <Field id="childId" name="childId" as="select" className="form-input">
-                                                            <option value="">Select Child Id</option>
-                                                            {menuData.map((item) => (
-                                                                <option key={item.id} value={item.id}>
-                                                                    {item.label}
-                                                                </option>
-                                                            ))}
-                                                        </Field>
-                                                        <ErrorMessage name="childId" component="div" className="text-red-500 text-sm" />
-                                                    </div> */}
-                                                    {/* <div className="mb-5 custom-select">
-                                                    <label htmlFor="childId">Child Id</label>
-                                                        <Select placeholder="Select an option" options={menuData} />
-                                                    </div> */}
                                                     <div className="mb-5 custom-select">
                                                         <label htmlFor="childId">Child Id</label>
                                                         <Select placeholder="Select Child Id" options={menuData} />
