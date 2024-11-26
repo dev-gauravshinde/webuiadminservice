@@ -7,8 +7,9 @@ import AnimateHeight from 'react-animate-height';
 import { IRootState } from '../../store';
 import { useState, useEffect } from 'react';
 import IconCaretsDown from '../Icon/IconCaretsDown';
-import menuData from '../../shared/mocked-json/menuData.json';
+import IconCaretDown from '../Icon/IconCaretDown';
 import * as Icons from '../Icon/IconExports';
+import menuData from '../../shared/mocked-json/menuData.json';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -18,9 +19,9 @@ const Sidebar = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const toggleMenu = (value: string) => {
+    const toggleMenu = (value: string | null) => {
         setCurrentMenu((oldValue) => {
-            return oldValue === value ? '' : value;
+            return oldValue === value ? '' : value || '';
         });
     };
 
@@ -58,27 +59,38 @@ const Sidebar = () => {
         return menu.map((item: any) => (
             <li key={item.childId} className={`menu nav-item ${item.isTitle ? 'uppercase font-extrabold' : ''}`}>
                 {item.isTitle ? (
-                    <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">{item.label}</h2>
-                ) : (
+                    <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                        {item.icon && renderIcon(item.icon)}
+                        <span>{t(item.label)}</span>
+                    </h2>
+                ) : item.subItems && item.subItems.length > 0 ? (
                     <>
                         <button type="button" className={`nav-link group w-full ${currentMenu === item.label ? 'active' : ''}`} onClick={() => toggleMenu(item.label)}>
                             <div className="flex items-center">
                                 {renderIcon(item.icon)}
                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690]">{t(item.label)}</span>
                             </div>
+                            <div className={`${currentMenu !== item.label ? 'rtl:rotate-90 -rotate-90' : ''}`}>
+                                <IconCaretDown />
+                            </div>
                         </button>
-                        {item.subItems && item.subItems.length > 0 && (
-                            <AnimateHeight duration={300} height={currentMenu === item.label ? 'auto' : 0}>
-                                <ul className="sub-menu text-gray-500">
-                                    {item.subItems.map((sub: any) => (
-                                        <li key={sub.link}>
-                                            <NavLink to={sub.link}>{t(sub.label)}</NavLink>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </AnimateHeight>
-                        )}
+                        <AnimateHeight duration={300} height={currentMenu === item.label ? 'auto' : 0}>
+                            <ul className="sub-menu text-gray-500">
+                                {item.subItems.map((sub: any) => (
+                                    <li key={sub.link}>
+                                        <NavLink to={sub.link}>{t(sub.label)}</NavLink>
+                                    </li>
+                                ))}
+                            </ul>
+                        </AnimateHeight>
                     </>
+                ) : (
+                    <NavLink to={item.link || '#'} className={`nav-link group w-full ${currentMenu === item.label ? 'active' : ''}`} onClick={() => toggleMenu(null)}>
+                        <div className="flex items-center">
+                            {renderIcon(item.icon)}
+                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690]">{t(item.label)}</span>
+                        </div>
+                    </NavLink>
                 )}
             </li>
         ));
