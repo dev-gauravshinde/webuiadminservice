@@ -41,7 +41,7 @@
     {
         "label": "Role Master",
         "icon": "IconMenuDocumentation",
-        "link": "/role-master",
+        "link": "/masters/role-master",
         "parentId": 4,
         "childId": 5,
         "isTitle": false,
@@ -61,6 +61,17 @@
         "subItems": []
     },
     {
+        "label": "Menu Role Mapping",
+        "icon": "IconMenuWidgets",
+        "link": "/masters/menu-role-mapping",
+        "parentId": 4,
+        "childId": 7,
+        "isTitle": false,
+        "isAccess": true,
+        "status": 1,
+        "subItems": []
+    },
+    {
         "label": "Users",
         "icon": "",
         "link": "",
@@ -74,7 +85,7 @@
     {
         "label": "User Role",
         "icon": "IconMenuUsers",
-        "link": "/user-role",
+        "link": "/user/user-role",
         "parentId": 7,
         "childId": 8,
         "isTitle": false,
@@ -85,7 +96,7 @@
     {
         "label": "User List",
         "icon": "IconMenuNotes",
-        "link": "/user-list",
+        "link": "/user/user-list",
         "parentId": 7,
         "childId": 9,
         "isTitle": false,
