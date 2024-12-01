@@ -8,6 +8,7 @@ import mockedMenu from './../../shared/mocked-json/mockedMenu.json';
 import IconPlus from './../../components/Icon/IconPlus';
 import IconX from './../../components/Icon/IconX';
 import Select from 'react-select';
+import { showToastNotification } from '../../shared/components/ToastNotification';
 
 const MenuRoleMapping: React.FC = () => {
     const selectOptions = [
@@ -188,7 +189,7 @@ const MenuRoleMapping: React.FC = () => {
             resetForm();
         } catch (error) {
             console.error('Error:', error);
-            alert('Failed to add User Role Mapping');
+            showToastNotification('error', 'Something went wrong!');
         } finally {
             setSubmitting(false);
         }
