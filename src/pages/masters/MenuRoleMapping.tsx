@@ -16,6 +16,11 @@ const MenuRoleMapping: React.FC = () => {
         { value: 'purple', label: 'Purple' },
     ];
 
+    const statusOptions = [
+        { value: 'inactive', label: 'InActive' },
+        { value: 'active', label: 'Active' },
+    ];
+
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -99,9 +104,14 @@ const MenuRoleMapping: React.FC = () => {
         setAddRoleModal(true);
     };
 
-    interface UserRoleFormValues {
-        roleName: string;
-        desc: string;
+    interface UserRoleMappingFormValues {
+        menuId: number;
+        roleId: number;
+        read: boolean;
+        delete: boolean;
+        edit: boolean;
+        view: boolean;
+        approve: boolean;
         status: number;
         createDate: string;
         updateDate: string;
@@ -109,9 +119,14 @@ const MenuRoleMapping: React.FC = () => {
         updatedBy: number;
     }
 
-    const initialValues: UserRoleFormValues = {
-        roleName: '',
-        desc: '',
+    const initialValues: UserRoleMappingFormValues = {
+        menuId: 0,
+        roleId: 0,
+        read: false,
+        delete: false,
+        edit: false,
+        view: false,
+        approve: false,
         status: 0,
         createDate: new Date().toISOString(),
         updateDate: new Date().toISOString(),
@@ -120,19 +135,25 @@ const MenuRoleMapping: React.FC = () => {
     };
 
     const validationSchema = Yup.object({
-        roleName: Yup.string().required('Role Name is required'),
-        desc: Yup.string().required('Description is required'),
+        menuId: Yup.number().required('Menu ID is required'),
+        roleId: Yup.number().required('Role ID is required'),
+        read: Yup.boolean().required('Read permission is required'),
+        delete: Yup.boolean().required('Delete permission is required'),
+        edit: Yup.boolean().required('Edit permission is required'),
+        view: Yup.boolean().required('View permission is required'),
+        approve: Yup.boolean().required('Approve permission is required'),
+        status: Yup.number().required('Status is required'),
     });
 
-    const handleSubmit = async (values: UserRoleFormValues, { setSubmitting, resetForm }: FormikHelpers<UserRoleFormValues>) => {
+    const handleSubmit = async (values: UserRoleMappingFormValues, { setSubmitting, resetForm }: FormikHelpers<UserRoleMappingFormValues>) => {
         try {
             const response = await axios.post('https://api.finoracleassociates.in/api/MenuRoleMapping', values);
-            console.log('POST Successful:', response.data);
-            alert('Role added successfully!');
+            console.log('Response:', response.data);
+            alert('User Role Mapping added successfully!');
             resetForm();
         } catch (error) {
-            console.error('POST Error:', error);
-            alert('An error occurred while adding the role.');
+            console.error('Error:', error);
+            alert('Failed to add User Role Mapping');
         } finally {
             setSubmitting(false);
         }
@@ -214,8 +235,8 @@ const MenuRoleMapping: React.FC = () => {
                                             <Form>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                                     <div className="mb-5 custom-select">
-                                                        <label htmlFor="roleName">Menu Name</label>
-                                                        <Field name="roleName">
+                                                        <label htmlFor="menuId">Menu Name</label>
+                                                        <Field name="menuId">
                                                             {({ field, form }: any) => (
                                                                 <Select
                                                                     placeholder="Select an option"
@@ -232,12 +253,12 @@ const MenuRoleMapping: React.FC = () => {
                                                                 />
                                                             )}
                                                         </Field>
-                                                        <ErrorMessage name="roleName" component="div" className="text-red-500 text-sm" />
+                                                        <ErrorMessage name="menuId" component="div" className="text-red-500 text-sm" />
                                                     </div>
 
                                                     <div className="mb-5 custom-select">
-                                                        <label htmlFor="userRole">User Role</label>
-                                                        <Field name="userRole">
+                                                        <label htmlFor="roleId">User Role</label>
+                                                        <Field name="roleId">
                                                             {({ field, form }: any) => (
                                                                 <Select
                                                                     placeholder="Select an option"
@@ -262,13 +283,84 @@ const MenuRoleMapping: React.FC = () => {
                                                                 />
                                                             )}
                                                         </Field>
-                                                        <ErrorMessage name="userRole" component="div" className="text-red-500 text-sm" />
+                                                        <ErrorMessage name="roleId" component="div" className="text-red-500 text-sm" />
                                                     </div>
 
                                                     <div className="mb-5">
-                                                        <label htmlFor="desc">Description</label>
-                                                        <Field id="desc" name="desc" type="text" placeholder="Enter Description" className="form-input" />
-                                                        <ErrorMessage name="desc" component="div" className="text-red-500 text-sm" />
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="read" name="read" />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">Create</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="edit" name="edit" />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">Edit</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="view" name="view" />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">View</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field type="checkbox" className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="delete" name="delete" />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">Delete</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-5">
+                                                        <div className="flex items-center">
+                                                            <label className="w-12 h-6 relative">
+                                                                <Field
+                                                                    type="checkbox"
+                                                                    className="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer"
+                                                                    id="approve"
+                                                                    name="approve"
+                                                                />
+                                                                <span className="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                                            </label>
+                                                            <span className="ml-2 text-white-dark">Approve</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="mb-5 custom-select">
+                                                        <label htmlFor="status">Status</label>
+                                                        <Field name="status">
+                                                            {({ field, form }: any) => (
+                                                                <Select
+                                                                    placeholder="Select an option"
+                                                                    options={statusOptions.map((item) => ({
+                                                                        value: item.value,
+                                                                        label: item.label,
+                                                                    }))}
+                                                                    value={statusOptions
+                                                                        .map((item) => ({
+                                                                            value: item.value,
+                                                                            label: item.label,
+                                                                        }))
+                                                                        .find((option) => option.label === field.value)}
+                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.label : '')}
+                                                                    onBlur={() => form.setFieldTouched(field.name, true)}
+                                                                    isClearable
+                                                                />
+                                                            )}
+                                                        </Field>
+                                                        {/* <Field name="status" as={Select} options={statusOptions} /> */}
+                                                        <ErrorMessage name="status" component="div" className="text-red-500 text-sm" />
                                                     </div>
                                                 </div>
                                                 <div className="flex justify-end items-center mt-8">
