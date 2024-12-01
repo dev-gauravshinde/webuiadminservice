@@ -11,14 +11,45 @@ import Select from 'react-select';
 
 const MenuRoleMapping: React.FC = () => {
     const selectOptions = [
-        { value: 'orange', label: 'Orange' },
-        { value: 'white', label: 'White' },
-        { value: 'purple', label: 'Purple' },
+        {
+            id: 49,
+            label: 'Bill Not Created List',
+            icon: 'icon',
+            link: '/automech/companypendingreport',
+            parentId: 1,
+            childId: 41,
+            isTitle: false,
+            isAccess: true,
+            createDate: null,
+            updateDate: '2024-11-26T12:13:40.2554238',
+            createdBy: null,
+            status: 1,
+            updatedBy: 1,
+            createdByUser: null,
+            updatedByUser: null,
+        },
+        {
+            id: 48,
+            label: 'Company Payment Report',
+            icon: 'icon',
+            link: '/automech/companypaymentreport',
+            parentId: 1,
+            childId: 41,
+            isTitle: false,
+            isAccess: true,
+            createDate: '2024-11-23T21:05:54.8965405',
+            updateDate: null,
+            createdBy: 1,
+            status: 1,
+            updatedBy: null,
+            createdByUser: null,
+            updatedByUser: null,
+        },
     ];
 
     const statusOptions = [
-        { value: 'inactive', label: 'InActive' },
-        { value: 'active', label: 'Active' },
+        { value: false, label: 'InActive' },
+        { value: true, label: 'Active' },
     ];
 
     const [page, setPage] = useState(1);
@@ -105,14 +136,14 @@ const MenuRoleMapping: React.FC = () => {
     };
 
     interface UserRoleMappingFormValues {
-        menuId: number;
-        roleId: number;
+        menuId: number | null;
+        roleId: number | null;
         read: boolean;
         delete: boolean;
         edit: boolean;
         view: boolean;
         approve: boolean;
-        status: number;
+        status: boolean | null;
         createDate: string;
         updateDate: string;
         createdBy: number;
@@ -120,14 +151,14 @@ const MenuRoleMapping: React.FC = () => {
     }
 
     const initialValues: UserRoleMappingFormValues = {
-        menuId: 0,
-        roleId: 0,
+        menuId: null,
+        roleId: null,
         read: false,
         delete: false,
         edit: false,
         view: false,
         approve: false,
-        status: 0,
+        status: null as boolean | null,
         createDate: new Date().toISOString(),
         updateDate: new Date().toISOString(),
         createdBy: 0,
@@ -135,19 +166,23 @@ const MenuRoleMapping: React.FC = () => {
     };
 
     const validationSchema = Yup.object({
-        menuId: Yup.number().required('Menu ID is required'),
-        roleId: Yup.number().required('Role ID is required'),
+        menuId: Yup.number().nullable().required('Menu ID is required'),
+        roleId: Yup.number().nullable().required('Role ID is required'),
         read: Yup.boolean().required('Read permission is required'),
         delete: Yup.boolean().required('Delete permission is required'),
         edit: Yup.boolean().required('Edit permission is required'),
         view: Yup.boolean().required('View permission is required'),
         approve: Yup.boolean().required('Approve permission is required'),
-        status: Yup.number().required('Status is required'),
+        status: Yup.boolean().nullable().required('Status is required'),
     });
 
     const handleSubmit = async (values: UserRoleMappingFormValues, { setSubmitting, resetForm }: FormikHelpers<UserRoleMappingFormValues>) => {
         try {
-            const response = await axios.post('https://api.finoracleassociates.in/api/MenuRoleMapping', values);
+            const postData = {
+                ...values,
+                status: values.status === null ? null : values.status ? 1 : 0,
+            };
+            const response = await axios.post('https://api.finoracleassociates.in/api/MenuRoleMapping', postData);
             console.log('Response:', response.data);
             alert('User Role Mapping added successfully!');
             resetForm();
@@ -241,8 +276,8 @@ const MenuRoleMapping: React.FC = () => {
                                                                 <Select
                                                                     placeholder="Select an option"
                                                                     options={selectOptions}
-                                                                    value={selectOptions.find((option) => option.value === field.value)}
-                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.value : '')}
+                                                                    value={selectOptions.find((option) => option.id === field.value) || null}
+                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.id : '')}
                                                                     onBlur={() => form.setFieldTouched(field.name, true)}
                                                                     isClearable
                                                                     menuPortalTarget={document.body}
@@ -271,8 +306,8 @@ const MenuRoleMapping: React.FC = () => {
                                                                             value: item.id,
                                                                             label: item.roleName,
                                                                         }))
-                                                                        .find((option) => option.label === field.value)}
-                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.label : '')}
+                                                                        .find((option) => option.value === field.value)}
+                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.value : null)}
                                                                     onBlur={() => form.setFieldTouched(field.name, true)}
                                                                     isClearable
                                                                     menuPortalTarget={document.body}
@@ -343,23 +378,14 @@ const MenuRoleMapping: React.FC = () => {
                                                             {({ field, form }: any) => (
                                                                 <Select
                                                                     placeholder="Select an option"
-                                                                    options={statusOptions.map((item) => ({
-                                                                        value: item.value,
-                                                                        label: item.label,
-                                                                    }))}
-                                                                    value={statusOptions
-                                                                        .map((item) => ({
-                                                                            value: item.value,
-                                                                            label: item.label,
-                                                                        }))
-                                                                        .find((option) => option.label === field.value)}
-                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.label : '')}
+                                                                    options={statusOptions}
+                                                                    value={statusOptions.find((option) => option.value === field.value) || null}
+                                                                    onChange={(option) => form.setFieldValue(field.name, option ? option.value : null)}
                                                                     onBlur={() => form.setFieldTouched(field.name, true)}
                                                                     isClearable
                                                                 />
                                                             )}
                                                         </Field>
-                                                        {/* <Field name="status" as={Select} options={statusOptions} /> */}
                                                         <ErrorMessage name="status" component="div" className="text-red-500 text-sm" />
                                                     </div>
                                                 </div>
