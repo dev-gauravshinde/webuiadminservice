@@ -62,7 +62,7 @@
     },
     {
         "label": "Menu Role Mapping",
-        "icon": "IconMenuWidgets",
+        "icon": "IconMenuTables",
         "link": "/masters/menu-role-mapping",
         "parentId": 4,
         "childId": 7,

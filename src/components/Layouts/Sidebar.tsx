@@ -51,7 +51,7 @@ const Sidebar = () => {
 
     const renderIcon = (iconName: string) => {
         const IconComponent = (Icons as any)[iconName];
-        return IconComponent ? <IconComponent className="shrink-0" /> : null;
+        return IconComponent ? <IconComponent className="group-hover:!text-primary shrink-0" /> : null;
     };
 
     // Recursively render the menu
